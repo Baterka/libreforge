@@ -12,9 +12,8 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.CraftItemEvent
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.Material
+import org.bukkit.event.inventory.SmithItemEvent
 
 class TriggerCraft : Trigger(
     "craft", listOf(
@@ -24,7 +23,7 @@ class TriggerCraft : Trigger(
     )
 ) {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-    fun handle(event: CraftItemEvent) {
+    fun handleCrafting(event: CraftItemEvent) {
         if (McmmoManager.isFake(event)) {
             return
         }
@@ -92,6 +91,28 @@ class TriggerCraft : Trigger(
                 item = item
             ),
             recipeRepetitions.toDouble()
+        )
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    fun handleSmithing(event: SmithItemEvent){
+        if (McmmoManager.isFake(event)) {
+            return
+        }
+
+        if (event.result == Event.Result.DENY) {
+            return
+        }
+
+        val player = event.whoClicked as? Player ?: return
+        val item = event.currentItem
+
+        this.processTrigger(
+            player,
+            TriggerData(
+                player = player,
+                item = item
+            )
         )
     }
 }

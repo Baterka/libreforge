@@ -4,6 +4,7 @@ import com.willfp.eco.core.Prerequisite
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.libreforge.filters.Filter
 import com.willfp.libreforge.triggers.TriggerData
+import org.bukkit.event.entity.CreatureSpawnEvent
 
 object FilterFromSpawner : Filter() {
     override fun passes(data: TriggerData, config: Config): Boolean {
@@ -13,8 +14,8 @@ object FilterFromSpawner : Filter() {
             return true
         }
 
-        return config.withInverse("from_spawner", Config::getBool) {
-            it == entity.fromMobSpawner()
+        return config.withInverse("from_spawner", Config::getBool) { p ->
+            p == (entity.entitySpawnReason == CreatureSpawnEvent.SpawnReason.SPAWNER)
         }
     }
 }
